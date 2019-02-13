@@ -20,6 +20,9 @@ dht DHT;
 #define RxNodePin 13          // pin for Sigfox module
 #define TxNodePin 15
 
+#define webButton D3          // webButton to open and close setup page
+#define webLED D2             // ON if page available
+
 SoftwareSerial Sigfox =  SoftwareSerial(RxNodePin, TxNodePin);  // Setup UART Communication with 
 uint8_t sigfoxMsg[12];        // 12 bytes message buffer
 
@@ -33,6 +36,9 @@ String PACSigfox;
 void setup(){
   pinMode(RxNodePin, INPUT);
   pinMode(TxNodePin, OUTPUT);
+
+  pinMode(webButton, INPUT);
+  pinMode(webLED, OUTPUT);
   
   Serial.begin(115200);
   Sigfox.begin(9600);
@@ -44,17 +50,23 @@ void setup(){
   Serial.print("Device PAC Number: " + PACSigfox);
 
   Serial.print("The setup page is available at 192.168.4.1 in a web browser");
-
+  
   webSetupPage();
 }
 
 void loop(){
-  acquireDHT();
-    
-  Serial.println(T);
-  Serial.println(H);
+
+  while(digitalRead(webButton)==LOW){
+    acquireDHT();
+
+    Serial.print("Temperature: ");
+    Serial.println(T);
+    Serial.print("Humidity: ");
+    Serial.println(H);
   
-  sendDataSigfox(T, H);
+    msgSigfox(T, H);
+  }
+  webSetupPage();
 }
 
 
@@ -80,13 +92,60 @@ void acquireDHT(){
 
 
 // Send data to Sigfox 
-void sendDataSigfox(int T, int H) {
-  //Sigfox.print("AT$SF=");
-  Sigfox.print(T + "/" + H);
-  Sigfox.print("\r");
-  delay(1000*30);     // delay to be in the low
+void msgSigfox(int T, int H) {
+  String temperature = (String)T;
+  String humidity = (String)H;
+
+  if(T<10){
+    sigfoxMsg[0] = 0x00;
+    sigfoxMsg[1] = temperature[0];
+  }
+  else{
+    sigfoxMsg[0] = uint8_t(temperature[0]);
+    sigfoxMsg[1] = uint8_t(temperature[1]);
+  }
+
+
+   if(H<10){
+    sigfoxMsg[2] = 0x00;
+    sigfoxMsg[3] = humidity[0];
+  }
+  else{
+    sigfoxMsg[2] = uint8_t(humidity[0]);
+    sigfoxMsg[3] = uint8_t(humidity[1]);
+  }
+
+  sendDataSigfox(sigfoxMsg, 4);
 }
 
+
+String sendDataSigfox(uint8_t sigfoxMsg[], int bufferSize) {
+  String status = "";
+  char sigfoxBuffer;
+
+  // Send AT$SF=xx to WISOL to send XX (payload data of size 1 to 12 bytes)
+  Sigfox.print("AT$SF=");
+  for(int i= 0;i<bufferSize;i++){
+    if (sigfoxMsg[i]<0x10) {
+      Sigfox.print("0");
+    }
+    Sigfox.print(String(sigfoxMsg[i], HEX));
+  }
+
+  Sigfox.print("\r");
+
+  while (!Sigfox.available()){
+     delay(10);
+  }
+
+  while(Sigfox.available()){
+    sigfoxBuffer = (char)Sigfox.read();
+    status += sigfoxBuffer;
+    delay(10);
+  }
+
+  return status;
+}
 
 
 
@@ -144,11 +203,17 @@ void webSetupPage(){
   WiFi.softAP(ssid);
   server.on("/", handleRoot);
   server.begin();
+  Serial.println("setup page started");
+  digitalWrite(webLED, HIGH);
+  delay(1000*5);
   
-  for(int i=0;i<=20;i++){
+  while(digitalRead(webButton) == LOW){
     server.handleClient();
-    delay(1000*2);
+    delay(100);
   }
+  
   // Close the access point
   WiFi.softAPdisconnect (true);
+  Serial.println("setup page closed");
+  digitalWrite(webLED, LOW);
 }
