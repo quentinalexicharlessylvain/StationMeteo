@@ -4,37 +4,124 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>title</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   </head>
   <body>
 
     <div id="app">
-      <p v-for="tps in temperatures">
-        {{tps}}
-      </p>
+      <template>
+        <v-tabs
+          centered
+          color="cyan"
+          dark
+          icons-and-text
+        >
+          <v-tabs-slider color="yellow"></v-tabs-slider>
+          <v-tab href="#tab-1">
+            Recent
+          </v-tab>
+          <v-tab href="#tab-2">
+            Table
+          </v-tab>
+          <v-tab href="#tab-3">
+            Diagram
+          </v-tab>
 
-</div>
+          <v-tab-item
+            :key="1"
+            :value="'tab-' + 1"
+          >
+          </v-tab-item>
+          <v-tab-item
+            :key="2"
+            :value="'tab-' + 2"
+            >
+              <v-data-table
+              :headers="headers"
+              :items="releves"
+              class="elevation-1"
+              >
+                <template slot="items" slot-scope="props">
+                  <td>{{ props.item.name }}</td>
+                  <td class="text-xs-right">{{ props.item.temp }}</td>
+                  <td class="text-xs-right">{{ props.item.humid }}</td>
+                  <td class="text-xs-right">{{ props.item.t }}</td>
+                </template>
+              </v-data-table>
+
+            </v-tab-item>
+            <v-tab-item
+              :key="3"
+              :value="'tab-' + 3"
+            >
+            <v-container fluid>
+      <p>Temperature</p>
+      <v-sparkline
+        :fill="fill"
+        :gradient="gradient"
+        :line-width="width"
+        :padding="padding"
+        :smooth="radius || false"
+        :value="[1,2,3]"
+        auto-draw
+      ></v-sparkline>
+
+      <v-divider></v-divider>
+
+      <v-layout wrap>
+        <v-flex xs6>
+          <v-layout fill-height align-center>
+            <v-switch v-model="fill" label="Filled"></v-switch>
+          </v-layout>
+        </v-flex>
+      </v-layout>
+    </v-container>
+            </v-tab-item>
+        </v-tabs>
+      </template>
+    </div>
+
 
 </body>
 
 <script type="text/javascript">
 
-  var app3 = new Vue({
+  var app = new Vue({
   el: '#app',
   data: {
-    temperatures: []
+    releves:[],
+    headers: [
+        {
+          text: 'Number',
+          align: 'left',
+          sortable: false,
+          value: 'name'
+        },
+        { text: 'Temperature', value: 'temp' },
+        { text: 'Humidity', value: 'humi' },
+        { text: 'Date', value: 'time' }
+      ],
+      fill: true,
+    gradient: ['red', 'orange', 'yellow'],
+    padding: 8,
+    radius: 10,
+    width: 2
   },
   mounted () {
-    this.get_temperatures()
+    this.get_releves()
   },
   methods: {
-    get_temperatures() {
+    get_releves() {
       // Make a request for a user with a given ID
-      axios.get(' http://94bdf08e.eu.ngrok.io/temps')
+      axios.get('http://1ac53c8e.ngrok.io/releve')
         .then((response) => {
           // handle success
-          this.temperatures = response.data
+          this.releves = response.data
         })
         .catch(function (error) {
           // handle error
@@ -42,11 +129,15 @@
         })
         .then(function () {
           // always executed
+
         });
     }
   }
 })
 
 
+
+
 </script>
+
 </html>
