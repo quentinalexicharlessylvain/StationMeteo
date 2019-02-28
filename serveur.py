@@ -41,24 +41,18 @@ def decode(receivedData):
 
 @app.route("/", methods=['POST'])
 def data():
- 	if request.method=='POST':
- 		body = request.json
- 		if body == None:
- 			return "not a json"
- 		if 'data' in body.keys():
+    if request.method=='POST':
+        body = request.json
+        if body == None:
+            return "not a json"
+        if 'data' in body.keys():
             decodage = decode(body['data'][1])
             temperature = int(decodage[0])
             humidity = int (decodage[1])
             cursor.execute("""
                 INSERT INTO weather(temp, humid, date) VALUES(?, ?, SYSDATETIME ())""", (temperature, humidity))
- 			print(body['data'][1])
- 		return jsonify(body)
-
-
-
-decodage2 = decode("32343139")
-temperature.append(int(decodage[0]))
-humidity.append(int(decodage[1]))
+            print(body['data'][1])
+        return jsonify(body)
 
 
 @app.route("/", methods=['GET'])
@@ -71,7 +65,7 @@ def getreleve():
 	if request.method=='GET':
 		cursor.execute("""SELECT name, temp, humid, date FROM weather""")
         releves = cursor.fetchall()
-		return jsonify(releves)
+        return jsonify(releves)
 
 
 app.run(debug=True)
