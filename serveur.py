@@ -22,8 +22,6 @@ CREATE TABLE IF NOT EXISTS weather(
 """)
 conn.commit()
 
-temperature = []
-humidity = []
 
 app._static_folder = os.path.abspath('')
 
