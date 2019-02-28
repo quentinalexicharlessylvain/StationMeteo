@@ -3,8 +3,9 @@
 <html lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>title</title>
+    <title>Weather Channel</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="http://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -17,25 +18,89 @@
       <template>
         <v-tabs
           centered
-          color="cyan"
+          color="gray"
           dark
           icons-and-text
         >
-          <v-tabs-slider color="yellow"></v-tabs-slider>
+          <v-tabs-slider color="cyan"></v-tabs-slider>
           <v-tab href="#tab-1">
             Recent
+            <v-icon>mdi-calendar</v-icon>
           </v-tab>
           <v-tab href="#tab-2">
             Table
+            <v-icon>mdi-table</v-icon>
           </v-tab>
           <v-tab href="#tab-3">
             Diagram
+            <v-icon>mdi-chart-areaspline</v-icon>
           </v-tab>
 
           <v-tab-item
             :key="1"
             :value="'tab-' + 1"
           >
+          <section>
+        <v-layout
+          column
+          wrap
+          class="my-5"
+          align-center
+        >
+          <v-flex xs12 sm4 class="my-3">
+            <div class="text-xs-center">
+              <h2 class="headline">Weather Channel</h2>
+            </div>
+          </v-flex>
+          <v-flex xs12>
+            <v-container grid-list-xl>
+              <v-layout row wrap align-center>
+                <v-flex xs12 md4>
+                  <v-card class="elevation-0 transparent">
+                    <v-card-text class="text-xs-center">
+                      <v-icon x-large class="blue--text text--lighten-2">today</v-icon>
+                    </v-card-text>
+                    <v-card-title primary-title class="layout justify-center">
+                      <div class="headline text-xs-center">Date </br> Reading</div>
+                    </v-card-title>
+                    <v-card-text class="text-xs-center">
+                      {{dates[(Object.keys(dates).length) - 1]}}
+                    </v-card-text>
+                  </v-card>
+                </v-flex>
+
+                <v-flex xs12 md4>
+                  <v-card class="elevation-0 transparent">
+                    <v-card-text class="text-xs-center">
+                      <v-icon x-large class="blue--text text--lighten-2">mdi-thermometer</v-icon>
+                    </v-card-text>
+                    <v-card-title primary-title class="layout justify-center">
+                      <div class="headline text-xs-center">Temperature Reading</div>
+                    </v-card-title>
+                    <v-card-text class="text-xs-center">
+                      {{temperatures[(Object.keys(temperatures).length) - 1]}}
+                    </v-card-text>
+                  </v-card>
+                </v-flex>
+
+                <v-flex xs12 md4>
+                  <v-card class="elevation-0 transparent">
+                    <v-card-text class="text-xs-center">
+                      <v-icon x-large class="blue--text text--lighten-2">mdi-cloud</v-icon>
+                    </v-card-text>
+                    <v-card-title primary-title class="layout justify-center">
+                      <div class="headline text-xs-center">Humidity </br> Reading</div>
+                    </v-card-title>
+                    <v-card-text class="text-xs-center">
+                      {{humidities[(Object.keys(humidities).length) - 1]}}
+                    </v-card-text>
+                  </v-card>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-flex>
+        </v-layout>
+      </section>
           </v-tab-item>
           <v-tab-item
             :key="2"
@@ -47,10 +112,10 @@
               class="elevation-1"
               >
                 <template slot="items" slot-scope="props">
-                  <td>{{ props.item.name }}</td>
-                  <td class="text-xs-right">{{ props.item.temp }}</td>
-                  <td class="text-xs-right">{{ props.item.humid }}</td>
-                  <td class="text-xs-right">{{ props.item.t }}</td>
+                  <td class="text-xs-left">{{ props.item.name }}</td>
+                  <td class="text-xs-left">{{ props.item.temp }}</td>
+                  <td class="text-xs-left">{{ props.item.humid }}</td>
+                  <td class="text-xs-left">{{ props.item.t }}</td>
                 </template>
               </v-data-table>
 
@@ -67,20 +132,34 @@
         :line-width="width"
         :padding="padding"
         :smooth="radius || false"
-        :value="[1,2,3]"
+        :value="temperatures"
         auto-draw
       ></v-sparkline>
 
       <v-divider></v-divider>
-
-      <v-layout wrap>
-        <v-flex xs6>
-          <v-layout fill-height align-center>
-            <v-switch v-model="fill" label="Filled"></v-switch>
-          </v-layout>
-        </v-flex>
-      </v-layout>
     </v-container>
+
+    <v-container fluid>
+<p>Humidity</p>
+<v-sparkline
+:fill="fill"
+:gradient="gradient"
+:line-width="width"
+:padding="padding"
+:smooth="radius || false"
+:value="humidities"
+auto-draw
+></v-sparkline>
+
+<v-divider></v-divider>
+<v-layout wrap>
+  <v-flex xs6>
+    <v-layout fill-height align-center>
+      <v-switch v-model="fill" label="Filled"></v-switch>
+    </v-layout>
+  </v-flex>
+</v-layout>
+</v-container>
             </v-tab-item>
         </v-tabs>
       </template>
@@ -95,6 +174,9 @@
   el: '#app',
   data: {
     releves:[],
+    temperatures: [],
+    humidities: [],
+    dates: [],
     headers: [
         {
           text: 'Number',
@@ -118,10 +200,16 @@
   methods: {
     get_releves() {
       // Make a request for a user with a given ID
-      axios.get('http://1ac53c8e.ngrok.io/releve')
+      axios.get(' http://6cf50e7d.ngrok.io/releve')
         .then((response) => {
           // handle success
-          this.releves = response.data
+          this.releves = response.data;
+          var i;
+          for (i = 0; i < Object.keys(this.releves).length;i++){
+            this.temperatures.push(this.releves[i].temp);
+            this.humidities.push(this.releves[i].humid);
+            this.dates.push(this.releves[i].t);
+          }
         })
         .catch(function (error) {
           // handle error
@@ -129,14 +217,11 @@
         })
         .then(function () {
           // always executed
-
         });
     }
+
   }
 })
-
-
-
 
 </script>
 
