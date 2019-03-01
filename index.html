@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta http-equiv="refresh" content="300; url="index.html" />
   </head>
   <body>
 
@@ -23,15 +24,15 @@
           icons-and-text
         >
           <v-tabs-slider color="cyan"></v-tabs-slider>
-          <v-tab href="#tab-1">
+          <v-tab href="#tab-1" class= "title">
             Recent
             <v-icon>mdi-calendar</v-icon>
           </v-tab>
-          <v-tab href="#tab-2">
+          <v-tab href="#tab-2" class= "title">
             Table
             <v-icon>mdi-table</v-icon>
           </v-tab>
-          <v-tab href="#tab-3">
+          <v-tab href="#tab-3" class= "title">
             Diagram
             <v-icon>mdi-chart-areaspline</v-icon>
           </v-tab>
@@ -106,18 +107,20 @@
             :key="2"
             :value="'tab-' + 2"
             >
+              <v-app id="inspire">
               <v-data-table
               :headers="headers"
               :items="releves"
               class="elevation-1"
               >
-                <template slot="items" slot-scope="props">
+                <template v-slot:items="props">
                   <td class="text-xs-left">{{ props.item.name }}</td>
                   <td class="text-xs-left">{{ props.item.temp }}</td>
                   <td class="text-xs-left">{{ props.item.humid }}</td>
                   <td class="text-xs-left">{{ props.item.t }}</td>
                 </template>
               </v-data-table>
+              </v-app>
 
             </v-tab-item>
             <v-tab-item
@@ -125,7 +128,7 @@
               :value="'tab-' + 3"
             >
             <v-container fluid>
-      <p>Temperature</p>
+      <p class="headline">Temperature</p>
       <v-sparkline
         :fill="fill"
         :gradient="gradient"
@@ -140,7 +143,7 @@
     </v-container>
 
     <v-container fluid>
-<p>Humidity</p>
+<p class="headline">Humidity</p>
 <v-sparkline
 :fill="fill"
 :gradient="gradient"

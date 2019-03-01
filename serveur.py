@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS weather(
      name INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
      temp INTEGER,
      humid INTEGER,
-     date VARCHAR
+     t CHAR
 )
 ''')
 
@@ -57,12 +57,9 @@ def data():
             decodage = decode(body['data'])
             temperature = int(decodage[0])
             humidity = int (decodage[1])
-            date = datetime.datetime.utcnow()
+            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute('''
-                INSERT INTO weather(temp,humid,date) VALUES(?,?,?)''', (temperature, humidity, date))
-            cursor.execute("""SELECT name, temp, humid, date FROM weather""")
-            releves = cursor.fetchall()
-            print(releves)
+                INSERT INTO weather(temp,humid,t) VALUES(?,?,?)''', (temperature, humidity, date))
             print(body['data'])
         return jsonify(body)
 
@@ -75,8 +72,9 @@ def root():
 @app.route("/releve", methods=['GET'])
 def getreleve():
 	if request.method=='GET':
-		cursor.execute("""SELECT name, temp, humid, date FROM weather""")
+		cursor.execute("""SELECT name, temp, humid, t FROM weather""")
         releves = cursor.fetchall()
+        print(releves)
         return jsonify(releves)
 
 
