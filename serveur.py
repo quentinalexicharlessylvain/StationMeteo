@@ -63,19 +63,18 @@ def data():
             print(body['data'])
         return jsonify(body)
 
-
 @app.route("/", methods=['GET'])
 def root():
-	return send_file(filename_or_fp = "index.html", mimetype = "text/html")
+    return send_file(filename_or_fp = "index.html", mimetype = "text/html")
 
 
 @app.route("/releve", methods=['GET'])
 def getreleve():
-	if request.method=='GET':
-		cursor.execute("""SELECT name, temp, humid, t FROM weather""")
-        releves = cursor.fetchall()
-        print(releves)
-        return jsonify(releves)
+    if request.method=='GET':
+        cursor.execute("""SELECT name, temp, humid, t FROM weather""")
+    releves = cursor.fetchall()
+    print(releves)
+    return jsonify(releves)
 
 
 app.run(debug=True)
