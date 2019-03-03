@@ -63,8 +63,10 @@ void loop(){
     Serial.println(T);
     Serial.print("Humidity: ");
     Serial.println(H);
-  
+
+     
     msgSigfox(T, H);
+    delay(1000*60*10); // wait 10min before sending new message so we use 1% of the Sigfox emission bandwidth
   }
   webSetupPage();
 }
