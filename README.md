@@ -3,7 +3,7 @@ Projet IoT : Station Météo
 Affichage des données sur une carte
 
 ## Utilisation
-Afin de traiter les fichier .nc issue de base de données, vous devez placer dans dossier :un fichier le script python et un dossier nommé "example".
+Afin de traiter les fichier .nc issue de base de données, vous devez placer dans dossier : un fichier le script python et un dossier nommé "example".
 Le dossier "example" contient le fichier à traiter
 
 Le script python créer une liste à 2 dimensions (liste de liste), chaque valeur sera ensuite affichées sur la carte.
