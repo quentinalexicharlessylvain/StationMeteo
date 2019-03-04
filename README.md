@@ -33,7 +33,7 @@ Il est possible de positionner des repères sur les cartes affichées.
 ![Repère positionné](Figure_1-1.png)
 
 
-## EOuverture
+## Ouverture
 
 L'affichage des données prends plusieurs secondes, on ne peut donc pas afficher de données en temps réel, mais le système reste compatible avec les stations météo envoyant une données toutes les 15 minutes
 On pourrait créé un programme récupérant les images générées à l'aide d'un ensemble de données pour créer des cartes animées.
