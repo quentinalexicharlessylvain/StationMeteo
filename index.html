@@ -93,7 +93,7 @@
                       <div class="headline text-xs-center">Humidity </br> Reading</div>
                     </v-card-title>
                     <v-card-text class="text-xs-center">
-                      {{humidities[(Object.keys(humidities).length) - 1]}}
+                      {{humidities[(Object.keys(humidities).length) - 1]}}%
                     </v-card-text>
                   </v-card>
                 </v-flex>
@@ -116,7 +116,7 @@
                 <template v-slot:items="props">
                   <td class="text-xs-left">{{ props.item.name }}</td>
                   <td class="text-xs-left">{{ props.item.temp }}</td>
-                  <td class="text-xs-left">{{ props.item.humid }}</td>
+                  <td class="text-xs-left">{{ props.item.humid }}%</td>
                   <td class="text-xs-left">{{ props.item.t }}</td>
                 </template>
               </v-data-table>
@@ -167,7 +167,7 @@
         smooth
       >
         <template v-slot:label="item">
-          {{ item.value }}
+          {{ item.value }}%
         </template>
       </v-sparkline>
     </v-sheet>
@@ -215,7 +215,7 @@
   methods: {
     get_releves() {
       // Make a request for a user with a given ID
-      axios.get('http://85acb71e.ngrok.io/releve')
+      axios.get('http://ad94242d.ngrok.io/releve')
         .then((response) => {
           // handle success
           this.releves = response.data;
