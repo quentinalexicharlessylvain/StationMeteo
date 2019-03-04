@@ -19,8 +19,8 @@ Fonctionne sur python 2.7, testé sous Ubuntu 16.04
 # Exemples de données affichées
 
 Traitement du fichier file.nc et ajout de quelques données simulant une lecture MQTT
-(Data.jpeg)
+[Affichage des données](Data.jpeg)
 
 Il est possible de positionner des repères sur les cartes affichées.
-(Figure_1-1.png)
+[Repère positionné](Figure_1-1.png)
 
